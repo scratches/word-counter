@@ -33,6 +33,7 @@ public class CounterApplication {
 
 	public Map<String, Integer> incrementWordCount(Map<String, Integer> map,
 			String word) {
+		word = word.trim();
 		if (map.get(word) == null) {
 			map.put(word, 1);
 		}

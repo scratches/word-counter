@@ -86,7 +86,7 @@ public class CounterApplicationTests {
 		Map<String, Object> map = mapper
 				.readValue(
 						rest.postForObject("http://localhost:" + port + "/count",
-								"\"foo\"\n\"bar\"\n\"foo\"\n\"bar\"", String.class),
+								"foo\nbar\nfoo\nbar", String.class),
 						Map.class);
 		assertThat(map).containsEntry("foo", 2);
 	}
