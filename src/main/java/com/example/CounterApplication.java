@@ -1,8 +1,11 @@
 package com.example;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,7 +20,8 @@ public class CounterApplication {
 	// TODO: support Mono as return value
 	public Function<Flux<String>, Flux<Map<String, Integer>>> count() {
 		return words -> Flux.from(
-				words.reduce(new HashMap<String, Integer>(), this::incrementWordCount));
+				words.reduce(new HashMap<String, Integer>(), this::incrementWordCount)
+						.map(this::sort));
 	}
 
 	@Bean
@@ -29,6 +33,13 @@ public class CounterApplication {
 	@Bean
 	public Function<Flux<String>, Flux<Map<String, Integer>>> splitAndCount() {
 		return split().andThen(count());
+	}
+
+	private Map<String, Integer> sort(Map<String, Integer> map) {
+		return map.entrySet().stream()
+				.sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+						(u, v) -> u, LinkedHashMap::new));
 	}
 
 	public Map<String, Integer> incrementWordCount(Map<String, Integer> map,

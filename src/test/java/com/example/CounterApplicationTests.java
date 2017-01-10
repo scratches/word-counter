@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import reactor.core.publisher.Flux;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties="server.port=0", webEnvironment = WebEnvironment.NONE)
+@SpringBootTest(properties = "server.port=0", webEnvironment = WebEnvironment.NONE)
 public class CounterApplicationTests {
 
 	@LocalServerPort
@@ -45,6 +45,12 @@ public class CounterApplicationTests {
 	}
 
 	@Test
+	public void countOrder() {
+		assertThat(count.apply(Flux.just("a", "b", "b")).blockFirst().entrySet()
+				.iterator().next().getKey()).isEqualTo("b");
+	}
+
+	@Test
 	public void split() {
 		assertThat(split.apply(Flux.just("a b c", "b d", "a")).collectList().block())
 				.contains("a", "b");
@@ -52,9 +58,8 @@ public class CounterApplicationTests {
 
 	@Test
 	public void splitWithWhitespace() {
-		assertThat(
-				split.apply(Flux.just("a b c", "", "b d", "a")).collectList().block().size())
-						.isEqualTo(6);
+		assertThat(split.apply(Flux.just("a b c", "", "b d", "a")).collectList().block()
+				.size()).isEqualTo(6);
 	}
 
 	@Test
@@ -84,10 +89,8 @@ public class CounterApplicationTests {
 	@Test
 	public void countHttp() throws Exception {
 		Map<String, Object> map = mapper
-				.readValue(
-						rest.postForObject("http://localhost:" + port + "/count",
-								"foo\nbar\nfoo\nbar", String.class),
-						Map.class);
+				.readValue(rest.postForObject("http://localhost:" + port + "/count",
+						"foo\nbar\nfoo\nbar", String.class), Map.class);
 		assertThat(map).containsEntry("foo", 2);
 	}
 
