@@ -12,17 +12,18 @@ import reactor.core.publisher.Flux;
 
 @SpringBootApplication
 public class CounterApplication {
-	
+
 	@Bean
 	// TODO: support Mono as return value
 	public Function<Flux<String>, Flux<Map<String, Integer>>> count() {
-		return words -> Flux.from(words.reduce(new HashMap<String, Integer>(),
-				this::incrementWordCount));
+		return words -> Flux.from(
+				words.reduce(new HashMap<String, Integer>(), this::incrementWordCount));
 	}
-	
+
 	@Bean
 	public Function<Flux<String>, Flux<String>> split() {
-		return line -> line.flatMap(value -> Flux.fromArray(value.split("\\s")));
+		return line -> line.flatMap(value -> Flux.fromArray(value.split("\\W")))
+				.filter(value -> value.length() > 0);
 	}
 
 	@Bean
