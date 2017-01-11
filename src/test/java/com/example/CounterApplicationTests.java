@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import reactor.core.publisher.Flux;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties = "server.port=0", webEnvironment = WebEnvironment.NONE)
+@SpringBootTest(properties = {"server.port=0", "spring.cloud.stream.enabled=false"}, webEnvironment = WebEnvironment.NONE)
 public class CounterApplicationTests {
 
 	@LocalServerPort

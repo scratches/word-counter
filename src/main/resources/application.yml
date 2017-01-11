@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        input:
+          destination: splitWindowAndCount-input
+          group: default
+        output:
+          destination: splitWindowAndCount-output
+function:
+  name: splitWindowAndCount
+logging:
+  level:
+    org.springframework.integration: DEBUG
