@@ -11,8 +11,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.example.CounterApplication.WordCountProperties;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,6 +21,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
+
+import com.example.CounterApplication.WordCountProperties;
 
 import reactor.core.publisher.Flux;
 
@@ -54,6 +54,13 @@ public class CounterApplication {
 	}
 
 	@Bean
+	public Supplier<Flux<Object>> words() {
+		return () -> {
+			return Flux.intervalMillis(1000L).map(tick -> "one two two three three three");
+		};
+	}
+
+	@Bean
 	public Runnable wordCount() {
 		return () -> splitAndCount().apply(resourceSupplier().get())
 				.subscribe(printCounts());
@@ -62,6 +69,11 @@ public class CounterApplication {
 	@Bean
 	public Consumer<Map<String, Integer>> printCounts() {
 		return map -> System.err.println(map);
+	}
+
+	@Bean
+	public Consumer<Object> print() {
+		return o -> System.err.println(o);
 	}
 
 	@Bean
@@ -99,7 +111,7 @@ public class CounterApplication {
 
 	@Bean
 	public Function<Flux<String>, Flux<Map<String, Integer>>> splitWindowAndCount() {
-		return input -> input.window(2).log().flatMap(splitAndCount()).log();
+		return input -> input.window(10).log().flatMap(splitAndCount()).log();
 	}
 
 	private Map<String, Integer> sort(Map<String, Integer> map) {

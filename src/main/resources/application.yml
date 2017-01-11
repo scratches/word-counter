@@ -1,4 +1,21 @@
+logging:
+  level:
+    org.springframework.integration: WARN
+
+---
 spring:
+  profiles: source
+  cloud:
+    stream:
+      bindings:
+        output:
+          destination: splitWindowAndCount-input
+function:
+  name: words
+
+---
+spring:
+  profiles: processor
   cloud:
     stream:
       bindings:
@@ -9,6 +26,15 @@ spring:
           destination: splitWindowAndCount-output
 function:
   name: splitWindowAndCount
-logging:
-  level:
-    org.springframework.integration: DEBUG
+
+---
+spring:
+  profiles: sink
+  cloud:
+    stream:
+      bindings:
+        input:
+          destination: splitWindowAndCount-output
+          group: default
+function:
+  name: print
