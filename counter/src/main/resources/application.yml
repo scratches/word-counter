@@ -10,6 +10,8 @@ spring:
       bindings:
         output:
           destination: splitWindowAndCount-input
+server:
+  port: 9001
 function:
   name: words
 
@@ -24,6 +26,8 @@ spring:
           group: default
         output:
           destination: splitWindowAndCount-output
+server:
+  port: 9002
 function:
   name: splitWindowAndCount
 
@@ -36,5 +40,7 @@ spring:
         input:
           destination: splitWindowAndCount-output
           group: default
+server:
+  port: 9003
 function:
   name: print

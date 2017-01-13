@@ -35,6 +35,10 @@ public class CounterApplication {
 
 		private Resource location = new FileSystemResource("/tmp/words.txt");
 
+		private long interval = 1000L;
+
+		private int windowSize = 10;
+
 		public void setLocation(Resource location) {
 			this.location = location;
 		}
@@ -43,6 +47,21 @@ public class CounterApplication {
 			return this.location;
 		}
 
+		public long getInterval() {
+			return interval;
+		}
+
+		public void setInterval(long interval) {
+			this.interval = interval;
+		}
+
+		public int getWindowSize() {
+			return windowSize;
+		}
+
+		public void setWindowSize(int windowSize) {
+			this.windowSize = windowSize;
+		}
 	}
 
 	@Autowired
@@ -56,7 +75,7 @@ public class CounterApplication {
 	@Bean
 	public Supplier<Flux<Object>> words() {
 		return () -> {
-			return Flux.intervalMillis(1000L).map(tick -> "one two two three three three");
+			return Flux.intervalMillis(words.getInterval()).map(tick -> "one two two three three three");
 		};
 	}
 
@@ -111,7 +130,7 @@ public class CounterApplication {
 
 	@Bean
 	public Function<Flux<String>, Flux<Map<String, Integer>>> splitWindowAndCount() {
-		return input -> input.window(10).log().flatMap(splitAndCount()).log();
+		return input -> input.window(words.getWindowSize()).log().flatMap(splitAndCount()).log();
 	}
 
 	private Map<String, Integer> sort(Map<String, Integer> map) {
